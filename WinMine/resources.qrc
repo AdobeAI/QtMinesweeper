@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/resources">
+        <file>Resources/imgs/bank.png</file>
+        <file>Resources/imgs/emoji_0.png</file>
+        <file>Resources/imgs/emoji_1.png</file>
+        <file>Resources/imgs/emoji_2.png</file>
+        <file>Resources/imgs/flag.png</file>
+        <file>Resources/imgs/init.png</file>
+        <file>Resources/imgs/mine.ico</file>
+        <file>Resources/imgs/mine.png</file>
+        <file>Resources/imgs/num1.png</file>
+        <file>Resources/imgs/num2.png</file>
+        <file>Resources/imgs/num3.png</file>
+        <file>Resources/imgs/num4.png</file>
+        <file>Resources/imgs/num5.png</file>
+        <file>Resources/imgs/num6.png</file>
+        <file>Resources/imgs/num7.png</file>
+        <file>Resources/imgs/num8.png</file>
+    </qresource>
+</RCC>
