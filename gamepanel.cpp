@@ -33,7 +33,9 @@ void GamePanel::init(size_t _width, size_t _height, int _max_mine, bool change_l
             std::vector<std::unique_ptr<Cell>> temp;
             for(size_t y = 0 ; y < game_width ; y++) {
                 Cell* cell = new Cell(x, y, this);
-                temp.emplace_back(cell);   //能就地通过参数构造对象，不需要拷贝或者移动内存，相比push_back能更好地避免内存的拷贝与移动，使容器插入元素的性能得到进一步提升
+                temp.emplace_back(cell);   //能就地通过参数构造对象，不需要拷贝或者移动内存，相比push_back能更好地避免内存的拷贝与移动
+                                           //使容器插入元素的性能得到进一步提升
+
                 QObject::connect(cell, &Cell::dug, this, &GamePanel::dug);
                 //QObject::connect(cell, SIGNAL(dug(int, int)), this, SLOT(onDug(int, int)));
                 QObject::connect(cell, &Cell::setFlag, [this]() {});
@@ -55,7 +57,6 @@ void GamePanel::init(size_t _width, size_t _height, int _max_mine, bool change_l
     randomMine();
     calcNearMineCount();
 
-    emit start(max_mine);
     emit mineCountChanged(remain_mine);
 }
 
@@ -134,6 +135,9 @@ void GamePanel::dug(size_t x, size_t y) {
             return;
         }
     }
+    if(first_dug) {
+        emit start();
+    }
     first_dug = false;
 
     auto is_mine = cell->getStatus() == STATUS_MINE;
@@ -183,7 +187,6 @@ void GamePanel::randomMine() {
     std::vector<bool> random_cell(game_height * game_width);
     for(size_t i = 0 ; i < random_cell.size() ; i++) {
         random_cell[i] = i < max_mine;
-        std::cout << random_cell[i] <<std::endl;
     }
     for(size_t i = random_cell.size() - 1 ; i > 0 ; i--) {
         std::uniform_int_distribution<size_t> dis(0, i);
@@ -210,5 +213,14 @@ void GamePanel::resizeEvent(QResizeEvent*) {
     }
     else {
         setGeometry(x(), y() + (height() - w * game_height) / 2, width(), w * game_height);
+    }
+}
+
+void GamePanel::setDebugMode(bool enable) {
+    for (size_t x = 0; x < game_height; ++x) {
+        for (size_t y = 0; y < game_width; ++y) {
+            cells[x][y]->setDebugMode(enable);
+            cells[x][y]->update();
+        }
     }
 }

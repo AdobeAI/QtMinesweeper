@@ -48,6 +48,8 @@ public:
 
     void reset();
 
+    void setDebugMode(bool);
+
 
 private:
     void paintEvent(QPaintEvent*) override;
@@ -56,7 +58,7 @@ private:
 private:
     size_t x, y;
     CellStatus status, near_mine_count;
-    bool is_Mine, downed;
+    bool is_Mine, downed, debug_mode;
     QPixmap mine_img, flag_img;
 
 signals:

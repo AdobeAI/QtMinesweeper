@@ -24,19 +24,33 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++11
 
+INCLUDEPATH += \
+    src/. \
+
+
+LIBS        += -lGL
+LIBS        += -L/usr/local/lib -L/usr/lib -lmysqlcppconn
+INCLUDEPATH += -I/usr/include -I/usr/local/include
+               -I/usr/local/include/cppconn
+
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    cell.cpp \
-    gamepanel.cpp
+    gamepanel.cpp \
+    src/cell.cpp \
+    src/game_record.cpp \
+    dialog.cpp
 
 HEADERS += \
         mainwindow.h \
-    cell.h \
-    gamepanel.h
+    gamepanel.h \
+    src/cell.h \
+    src/game_record.h \
+    dialog.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    playerui.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

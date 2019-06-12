@@ -23,8 +23,10 @@ public:
 
     void showAll();
 
+    void setDebugMode(bool);
+
 signals:
-    void start(int max_mine);
+    void start();
 
     void mineCountChanged(int count);
 
@@ -35,6 +37,8 @@ signals:
     void gameOver();
 
     void win();
+
+    void gameStart();
 
 private:
     size_t game_width, game_height;

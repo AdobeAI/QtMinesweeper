@@ -9,7 +9,8 @@ Cell::Cell(size_t _x, size_t _y, QWidget *parent)
     , status(STATUS_INIT)
     , near_mine_count(STATUS_BANK)
     , is_Mine(false)
-    , downed(false) {
+    , downed(false)
+    , debug_mode(false){
 
     setFrameStyle(QFrame::NoFrame);
     setObjectName("cell");
@@ -48,6 +49,10 @@ void Cell::paintEvent(QPaintEvent*) {
 
     /*painter.setPen(QPen(QBrush(Qt::gray), 1));
     painter.drawRoundRect(0, 0, width() - 1, height() - 1, 2, 2);*/
+    if(debug_mode && isMine()) {
+        painter.setPen(QPen(QBrush(Qt::red), 1));
+        painter.drawRoundRect(0, 0, width() - 1, height() - 1, 2, 2);
+    }
 
     if (status == STATUS_MINE) {
         painter.drawPixmap(rc, mine_img);
@@ -136,4 +141,8 @@ size_t Cell::getY() const {
 
 bool Cell::isFlag() const {
     return status == STATUS_FLAG;
+}
+
+void Cell::setDebugMode(bool enable) {
+    debug_mode = enable;
 }
