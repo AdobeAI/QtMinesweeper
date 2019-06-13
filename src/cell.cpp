@@ -80,7 +80,7 @@ void Cell::mousePressEvent(QMouseEvent* event) {
     }
 }
 void Cell::reset() {
-    status = STATUS_INIT;
+    setStatus(STATUS_INIT);
     near_mine_count = STATUS_BANK;
     is_Mine = false;
     downed = false;

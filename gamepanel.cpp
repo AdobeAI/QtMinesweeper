@@ -54,8 +54,6 @@ void GamePanel::init(size_t _width, size_t _height, int _max_mine, bool change_l
     remain_mine = max_mine;
     move = 0;
     first_dug = true;
-    randomMine();
-    calcNearMineCount();
 
     emit mineCountChanged(remain_mine);
 }
@@ -78,8 +76,8 @@ void GamePanel::calcNearMineCount() {
     }
 }
 
-std::vector<const Cell*> GamePanel::getNearMine(size_t x, size_t y) const {
-    std::vector<const Cell*> near_mines;
+std::vector<Cell*> GamePanel::getNearMine(size_t x, size_t y) const {
+    std::vector<Cell*> near_mines;
 
     if (x && y) {
         near_mines.push_back(cells[x - 1][y - 1].get());
@@ -113,32 +111,36 @@ std::vector<const Cell*> GamePanel::getNearMine(size_t x, size_t y) const {
         near_mines.push_back(cells[x][y - 1].get());
     }
 
+    near_mines.push_back(cells[x][y].get());
+
     return near_mines;
 }
 
 void GamePanel::dug(size_t x, size_t y) {
+
+    if(first_dug) {
+        randomMine(x, y);
+        calcNearMineCount();
+        first_dug = false;
+        emit start();
+    }
+
     auto& cell = cells[x][y];
+
     if(cell->getStatus() == STATUS_FLAG) {
         return;
     }
+
     if(cell->isDowned()) {
         return;
     }
+
     if(cell->isMine()) {
-        if(first_dug) {
-            restart();
-            dug(x, y);
-        }else {
-            cell->setDowned(true);
-            showAll();
-            emit gameOver();
-            return;
-        }
+        cell->setDowned(true);
+        showAll();
+        emit gameOver();
+        return;
     }
-    if(first_dug) {
-        emit start();
-    }
-    first_dug = false;
 
     auto is_mine = cell->getStatus() == STATUS_MINE;
     cell->setDowned(true);
@@ -178,7 +180,7 @@ void GamePanel::showAll() {
     }
 }
 
-void GamePanel::randomMine() {
+void GamePanel::randomMine(size_t x, size_t y) {
 
     std::random_device rd;
     std::mt19937_64 gen = std::mt19937_64(rd());
@@ -201,6 +203,45 @@ void GamePanel::randomMine() {
             cells[x][y]->setMine(random_cell[i]);
             i++;
         }
+    }
+
+    int neighbor_mine = 0;
+    std::vector<Cell*> neighbor = getNearMine(x, y);
+    for(auto i : neighbor) {
+        if(i->isMine()) {
+            neighbor_mine++;
+        }
+    }
+    if(neighbor_mine == 0) {
+        return;
+    }
+    std::vector<Cell*> not_Mine_Cells;
+    for(size_t x = 0 ; x < game_height ; x++) {
+        for(size_t y = 0 ; y < game_width ; y++) {
+            auto itr =
+                std::find_if(neighbor.begin(), neighbor.end(), [x, y](Cell *cell) {
+                return cell->getX() == x && cell->getY() == y;
+                    });
+
+            if (itr == neighbor.end()) {
+                if(!cells[x][y]->isMine()) {
+                    not_Mine_Cells.push_back(cells[x][y].get());
+                }
+            }else {
+                (*itr)->setMine(false);
+            }
+        }
+    }
+
+    for(size_t i = not_Mine_Cells.size() - 1 ; i > 0 ; i--) {
+        std::uniform_int_distribution<size_t> dis(0, i);
+        size_t random_location = dis(gen);
+        uint8_t temp = random_cell[i];
+        random_cell[i] = random_cell[random_location];
+        random_cell[random_location] = temp;
+    }
+    for(size_t i = 0 ; i < neighbor_mine ; i++) {
+        not_Mine_Cells[i]->setMine(true);
     }
 }
 

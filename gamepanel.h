@@ -47,13 +47,13 @@ private:
     std::unique_ptr<QGridLayout> layout;
     std::vector<std::vector<std::unique_ptr<Cell>>> cells;
 
-    void randomMine();
+    void randomMine(size_t x, size_t y);
 
     void calcNearMineCount();
 
     void dug(size_t x, size_t y);
 
-    std::vector<const Cell*> getNearMine(size_t x, size_t y) const;
+    std::vector<Cell*> getNearMine(size_t x, size_t y) const;
 
     void resizeEvent(QResizeEvent*) override;
 };

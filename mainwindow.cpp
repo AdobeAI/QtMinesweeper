@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
     EnterPlayerNameDialog dialog(this);
     QObject::connect(&dialog, &EnterPlayerNameDialog::getPlayerName, [this](std::string _player_name) {
         player_name = _player_name;
-        ui->player_name->setText(QString::fromStdString("Hello " + player_name + " enjoy you game!"));
+        ui->player_name->setText(QString::fromStdString("Hello " + player_name + " enjoy your game!"));
     });
 
 
@@ -132,12 +132,14 @@ MainWindow::MainWindow(QWidget *parent) :
         int second = (show_time.hour()*60*60) + (show_time.minute()*60) + show_time.second();
 
         InsertRecord(player_name, second, play_level);
-        QMessageBox::information(this, "QMinesweeper", tr("You Win!"), QMessageBox::Yes);
+        QMessageBox::information(this, "WOW", tr("You Win!"), QMessageBox::Yes);
         updateRanking(play_level);
         });
 
     QObject::connect(ui->emojiButton, &QPushButton::pressed, [this]() {
         ui->stage->restart();
+        ui->time->display("00:00.000");
+        setEnmoji(1);
     });
 
     ui->ranking->setShowGrid(true);
